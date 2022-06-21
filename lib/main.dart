@@ -1,9 +1,12 @@
+import 'package:appointment/provider.dart';
 import 'package:appointment/screens/home.dart';
 import 'package:appointment/services/interceptors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   initiateInterceptors();
+  CoreDataHolder().getLocalData();
   runApp(const MyApp());
 }
 
@@ -16,16 +19,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+          primarySwatch: Colors.blue,
+          primaryColor:  Colors.blue,
+          primaryColorLight: Colors.white,
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(132, 70, 113, 1))
       ),
       home: const HomePage(),
     );

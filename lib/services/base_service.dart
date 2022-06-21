@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:appointment/services/urls.dart';
 import 'package:appointment/utils/enums.dart';
+import 'package:appointment/utils/helper_methods.dart';
 import 'package:dio/dio.dart';
 
 import '../utils/global_variables.dart';
@@ -21,13 +22,7 @@ class BaseService {
     dio.options.baseUrl = baseUrl ?? Urls.baseUrl ?? '';
     dio.options.headers[HttpHeaders.contentTypeHeader] = 'text/xml';
     dio.options.extra.addAll(extras);
-    dio.options.extra['storeResponse'] = storeResponseInDb;
     if(headers != null) dio.options.headers.addAll(headers);
-
-    // if (headers == null ||
-    //     dio.options.headers[HttpHeaders.contentTypeHeader] == 'text/xml') {
-    //   body = jsonEncode(body);
-    // }
 
     Response response;
       switch (method) {

@@ -1,7 +1,10 @@
 
+import 'package:appointment/provider.dart';
+import 'package:appointment/screens/appointment_list.dart';
 import 'package:appointment/screens/settings.dart';
 import 'package:flutter/material.dart';
 
+import '../repository/appointment_repo.dart';
 import '../utils/enums.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,8 +26,8 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
          children: [
            _buildButton(actionType, ActionType.settings, 'Settings'),
-           _buildButton(actionType, ActionType.settings, 'Refresh Data'),
-           _buildButton(actionType, ActionType.settings, 'View Appointments List'),
+           _buildButton(actionType, ActionType.refreshData, 'Refresh Data'),
+           _buildButton(actionType, ActionType.appointmentList, 'View Appointments List'),
          ],
         ),
       )
@@ -35,16 +38,27 @@ class _HomePageState extends State<HomePage> {
     return ElevatedButton(onPressed: ()=> callBack(actionType), child: Text(label));
   }
 
-  void actionType(ActionType actionType) {
+  Future<void> actionType(ActionType actionType) async {
     switch(actionType){
       case ActionType.settings:
          Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage()));
         break;
-      case ActionType.refreshData:
+      case ActionType.refreshData: case ActionType.appointmentList:
+        if(CoreDataHolder().userDetails == null){
+          const snackBar = SnackBar(
+            content: Text('Hey! provide login details in settings Page !!!'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          return;
+        }
 
-        break;
-      case ActionType.appointmentList:
-
+        if(ActionType.refreshData == actionType) {
+         var response = await AppointmentRepository().fetchAppointments();
+         CoreDataHolder().appointmentData = response;
+        }else {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AppointmentList()));
+        }
         break;
     }
   }
