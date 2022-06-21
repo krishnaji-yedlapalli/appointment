@@ -18,13 +18,15 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-       children: [
-         _buildButton(actionType, ActionType.settings, 'Settings'),
-         _buildButton(actionType, ActionType.settings, 'Refresh Data'),
-         _buildButton(actionType, ActionType.settings, 'View Appointments List'),
-       ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+         children: [
+           _buildButton(actionType, ActionType.settings, 'Settings'),
+           _buildButton(actionType, ActionType.settings, 'Refresh Data'),
+           _buildButton(actionType, ActionType.settings, 'View Appointments List'),
+         ],
+        ),
       )
     );
   }

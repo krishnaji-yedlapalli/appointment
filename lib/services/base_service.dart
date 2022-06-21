@@ -3,52 +3,59 @@ import 'dart:async';
 import 'dart:io';
 import 'package:appointment/services/urls.dart';
 import 'package:appointment/utils/enums.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+
+import '../utils/global_variables.dart';
 
 class BaseService {
   Future<dynamic> makeRequest<T>(
-      {required String? url,
+      {required String url,
       String? baseUrl,
       dynamic body,
       String? contentType,
       Map<String, dynamic>? queryParameters,
       Map<String, String>? headers,
       RequestType method = RequestType.get,
-      }) async {
-    var uri;
+        Map<String, dynamic> extras = const {}, bool storeResponseInDb = false}) async {
 
-    if (queryParameters == null) {
-      uri = Uri.parse('${baseUrl ?? Urls.baseUrl}$url');
-    } else {
-      String queryString = Uri(queryParameters: queryParameters).query;
-      uri = Uri.parse(
-          '${baseUrl ?? Urls.baseUrl}$url?$queryString');
-    }
+    dio.options.baseUrl = baseUrl ?? Urls.baseUrl ?? '';
+    dio.options.headers[HttpHeaders.contentTypeHeader] = 'text/xml';
+    dio.options.extra.addAll(extras);
+    dio.options.extra['storeResponse'] = storeResponseInDb;
+    if(headers != null) dio.options.headers.addAll(headers);
 
-    if (headers == null ||
-        headers[HttpHeaders.contentTypeHeader] == 'application/json') {
-      body = jsonEncode(body);
-    }
+    // if (headers == null ||
+    //     dio.options.headers[HttpHeaders.contentTypeHeader] == 'text/xml') {
+    //   body = jsonEncode(body);
+    // }
 
-    var header = headers ??
-        {
-          HttpHeaders.contentTypeHeader: 'application/json',
-        };
-
-    http.Response response;
+    Response response;
       switch (method) {
         case RequestType.get:
-          response = await http.get(uri);
-          break;
+          if (queryParameters != null && queryParameters.isNotEmpty) {
+            response = await dio.get(
+              url,
+              queryParameters: queryParameters,
+            );
+            return response.data;
+          }
+          response = await dio.get(url);
+          return response.data;
         case RequestType.put:
-          response = await http.put(uri, body: json.encode(body));
-          break;
+          response = await dio.put(url,
+              queryParameters: queryParameters, data: body);
+          return response.data;
         case RequestType.post:
-          response = await http.post(uri, headers: header, body: body);
-          break;
+          response = await dio.post(
+            url,
+            queryParameters: queryParameters,
+            data: body,
+          );
+          return response.data;
         case RequestType.delete:
-          response = await http.delete(uri, body: json.encode(body));
+          response = await dio.delete(url,
+              queryParameters: queryParameters, data: body);
+          return response.data;
       }
-      return json.decode(utf8.decode(response.bodyBytes));
+    }
   }
-}

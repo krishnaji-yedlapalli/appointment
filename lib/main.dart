@@ -1,7 +1,9 @@
 import 'package:appointment/screens/home.dart';
+import 'package:appointment/services/interceptors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  initiateInterceptors();
   runApp(const MyApp());
 }
 
