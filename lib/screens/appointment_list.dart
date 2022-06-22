@@ -1,5 +1,6 @@
 
 import 'package:appointment/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentList extends StatefulWidget {
@@ -15,7 +16,7 @@ class _AppointmentListState extends State<AppointmentList> {
     var appointmentDetails = CoreDataHolder().appointmentData;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${appointmentDetails?['Defaults']['SLUsername']['\$t']}'),
+        title: Text('${appointmentDetails?['Defaults']?['SLUsername']?['\$t'] ?? ''}'),
       ),
       body: appointmentDetails?['ResponseCode']['\$t'] != 'SC0001' ? _buildMessage(appointmentDetails) : ListView.builder(
           itemCount: appointmentDetails?['Appointments']['Appointment']?.length ?? 0,
@@ -25,7 +26,9 @@ class _AppointmentListState extends State<AppointmentList> {
 
   Widget _buildMessage(Map? appointmentDetails) {
     return Center(
-      child: Text('${appointmentDetails?['ResponseDescription']['\$t']}'),
+      child: Text('${appointmentDetails?['ResponseDescription']['\$t']}',
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+      ),
     );
   }
 
