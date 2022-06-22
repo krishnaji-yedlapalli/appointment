@@ -1,2 +1,0 @@
-
-CREATE TABLE appointments(localId INTEGER PRIMARY KEY AUTOINCREMENT, dat TEXT, data TEXT);

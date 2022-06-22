@@ -15,9 +15,13 @@ initiateInterceptors() {
             return handler.resolve(await OfflineApiHandler().requestSegregation(options));
           }
         },
-        onResponse:(response,handler) {
-            // OfflineApiHandler().requestSegregation(response.requestOptions);
+        onResponse:(response,handler) async {
           response.data = HelperMethods.decodeXmlResponseIntoJson(response.data);
+          if(response.requestOptions.extra['storeResponse'] && !(response.requestOptions.extra['isFromLocal'] ?? false)){
+            response.requestOptions.data = response.data;
+            response.requestOptions.method = 'PUT';
+            OfflineApiHandler().requestSegregation(response.requestOptions);
+          }
           return handler.next(response); // continue
           // If you want to reject the request with a error message,
           // you can reject a `DioError` object eg: `handler.reject(dioError)`

@@ -34,18 +34,10 @@ class OfflineApiHandler {
 
   Future initiateDataBase() async {
     _dataBase ??= openDatabase(
-      join(await getDatabasesPath(), 'appointments.db'),
+      join(await getDatabasesPath(), 'appointment.db'),
       onCreate: (db, version) async {
-        Batch batch = db.batch();
-        String script =  await rootBundle.loadString("assets/db/script.sql");
-        List<String> scripts = script.split(";");
-        for (var v in scripts) {
-          if(v.isNotEmpty )
-          {
-            batch.execute(v.trim());
-          }
-        }
-        await batch.commit();
+        await db.execute(
+            'CREATE TABLE appointments (appointmentDate TEXT PRIMARY KEY, appointments TEXT)');
       },
       version: 1,
     );

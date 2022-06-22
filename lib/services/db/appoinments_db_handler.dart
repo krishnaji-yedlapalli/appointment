@@ -29,14 +29,44 @@ class AppointmentsDbHandler extends DbHandler{
   @override
   Future<Response> performCrudOperation(RequestOptions options) async {
     Database db = await _dataBase;
-    var requestType = HelperMethods.enumFromString(RequestType.values, options.method);
+    var requestType = HelperMethods.enumFromString(RequestType.values, options.method.toLowerCase());
     var response;
     try {
       switch(requestType){
-        case RequestType.get:
-          final List<Map<String, dynamic>> maps = await db.query('property',
+        case RequestType.post:
+          final List<Map<String, dynamic>> maps = await db.query('appointments',
           );
-          return Response(requestOptions: options, data: maps, statusCode: 200);
+          var index = maps.indexWhere((e) {
+           return e['appointmentDate'] == options.extra['date'];
+          });
+          var response;
+          if(index != -1){
+            response = jsonDecode(maps[index]['appointments']);
+          }else{
+            response = {
+              "Response": {
+                "ResponseCode": {
+                  "\$t": "SC0002"
+                },
+                "ResponseDescription": {
+                  "\$t": "No data was present in local DB try with internet connection"
+                }
+              }
+            };
+          }
+          return Response(requestOptions: options, data: response, statusCode: 200);
+        case RequestType.put:
+        var appointmentData = <String, Object>{};
+        appointmentData['appointments'] = jsonEncode(options.data);
+        appointmentData['appointmentDate'] = options.extra['date'];
+        response =  await db.insert(
+          'appointments',
+          appointmentData,
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        options.extra['isFromLocal'] = true;
+        return Response(requestOptions: options, data: response, statusCode: 200);
+        break;
         default :
           return Response(requestOptions: options, data: response, statusCode: 405, statusMessage: 'Method Not Allowed');
       }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../repository/appointment_repo.dart';
 import '../utils/enums.dart';
+import '../utils/helper_methods.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -45,15 +46,13 @@ class _HomePageState extends State<HomePage> {
         break;
       case ActionType.refreshData: case ActionType.appointmentList:
         if(CoreDataHolder().userDetails == null){
-          const snackBar = SnackBar(
-            content: Text('Hey! provide login details in settings Page !!!'),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          HelperMethods.showSnackBarMessage(context, 'Hey! provide login details in settings Page !!!');
           return;
         }
 
         if(ActionType.refreshData == actionType) {
          var response = await AppointmentRepository().fetchAppointments();
+         HelperMethods.showSnackBarMessage(context, '${response?['ResponseDescription']['\$t']}');
          CoreDataHolder().appointmentData = response;
         }else {
           Navigator.push(context,

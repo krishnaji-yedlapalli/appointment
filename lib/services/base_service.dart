@@ -22,6 +22,7 @@ class BaseService {
     dio.options.baseUrl = baseUrl ?? Urls.baseUrl;
     dio.options.headers[HttpHeaders.contentTypeHeader] = 'text/xml';
     dio.options.extra.addAll(extras);
+    dio.options.extra['storeResponse'] = storeResponseInDb;
     if(headers != null) dio.options.headers.addAll(headers);
 
     Response response;

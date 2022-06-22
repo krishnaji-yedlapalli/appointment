@@ -1,6 +1,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:xml2json/xml2json.dart';
 
 class HelperMethods {
@@ -17,5 +19,12 @@ class HelperMethods {
     transformer.parse(cleanDataString);
     final json = transformer.toGData();
     return jsonDecode(json);
+  }
+
+  static showSnackBarMessage(BuildContext context, String label) {
+    var snackBar = SnackBar(
+      content: Text(label),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

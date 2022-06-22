@@ -34,22 +34,52 @@ class _AppointmentListState extends State<AppointmentList> {
   }
 
   Widget _buildAppointment(Map appointment) {
-    return Wrap(
-      direction: Axis.vertical,
-      children : [
-     Text('${appointment['CustomerDetails']['CustomerTitle']['\$t']} '
-          '${appointment['CustomerDetails']['CustomerForename']['\$t'] ?? ''} ${appointment['CustomerDetails']['CustomerSurname']['\$t'] ?? ''}'),
-     Text('Comapany Name : ${appointment['CustomerDetails']['CustomerCompanyName']['\$t'] ?? '-'} \n'
-          'Building Name : ${appointment['CustomerDetails']['CustomerBuildingName']['\$t'] ?? '-'} \n'
-          'Customer Street : ${appointment['CustomerDetails']['CustomerStreet']['\$t'] ?? '-'} \n'
-          'Customer Address Area : ${appointment['CustomerDetails']['CustomerAddressArea']['\$t'] ?? '-'} \n'
-          'Customer Address Town : ${appointment['CustomerDetails']['CustomerAddressTown']['\$t'] ?? '-'} \n'
-          'Customer Country : ${appointment['CustomerDetails']['CustomerCounty']['\$t'] ?? '-'}'),
-        Text('Warranty Details : ${appointment['WarrantyDetails']['ChargeType']['\$t'] ?? '-'} \n'
-            'Job Type : ${appointment['WarrantyDetails']['JobType']['\$t'] ?? '-'}'),
-         IconButton(onPressed: () => openDialPad('${appointment['CustomerDetails']['CustomerMobileNo']['\$t']}'), icon: Icon(Icons.call)),
-         IconButton(onPressed: openMaps, icon: const Icon(Icons.location_on)),
-    ]
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+      color: const Color.fromRGBO(248, 236, 248, 1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+            child: Wrap(
+                direction: Axis.vertical,
+                children : [
+                  Text('Customer Name : ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigo),),
+                  Text('${appointment['CustomerDetails']['CustomerTitle']['\$t']} '
+                      '${appointment['CustomerDetails']['CustomerForename']['\$t'] ?? ''} ${appointment['CustomerDetails']['CustomerSurname']['\$t'] ?? ''}', style: TextStyle(fontWeight: FontWeight.w600),),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child:  Text('Customer Address : ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigo),),
+                  ),
+                  Text('Comapany Name : ${appointment['CustomerDetails']['CustomerCompanyName']['\$t'] ?? '-'} \n'
+                      'Building Name : ${appointment['CustomerDetails']['CustomerBuildingName']['\$t'] ?? '-'} \n'
+                      'Customer Street : ${appointment['CustomerDetails']['CustomerStreet']['\$t'] ?? '-'} \n'
+                      'Customer Address Area : ${appointment['CustomerDetails']['CustomerAddressArea']['\$t'] ?? '-'} \n'
+                      'Customer Address Town : ${appointment['CustomerDetails']['CustomerAddressTown']['\$t'] ?? '-'} \n'
+                      'Customer Country : ${appointment['CustomerDetails']['CustomerCounty']['\$t'] ?? '-'}'),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text('Appointment Details : ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigo),),
+                  ),
+                  Text('Warranty Details : ${appointment['WarrantyDetails']['ChargeType']['\$t'] ?? '-'} \n'
+                      'Job Type : ${appointment['WarrantyDetails']['JobType']['\$t'] ?? '-'}'),
+
+                ]
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(onPressed: () => openDialPad('Job Type : ${appointment['CustomerDetails']['CustomerMobileNo']['\$t']}'), icon: Icon(Icons.call, color: Colors.green, size: 30,)),
+              IconButton(onPressed: () =>openMaps('${appointment['CustomerDetails']['CustomerPostcode']['\$t']}'), icon: const Icon(Icons.location_on, color: Colors.blue, size: 30,)),
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -60,9 +90,9 @@ class _AppointmentListState extends State<AppointmentList> {
     });
   }
 
-  void openMaps() async {
+  void openMaps(String postcode) async {
     if (!await launch(
-    'https://www.google.com/maps',
+    'https://www.google.com/maps/search/?api=1&query=$postcode',
     )) {
     }
   }
