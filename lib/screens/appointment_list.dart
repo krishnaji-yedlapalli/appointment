@@ -2,6 +2,7 @@
 import 'package:appointment/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentList extends StatefulWidget {
   const AppointmentList({Key? key}) : super(key: key);
@@ -18,15 +19,15 @@ class _AppointmentListState extends State<AppointmentList> {
       appBar: AppBar(
         title: Text('${appointmentDetails?['Defaults']?['SLUsername']?['\$t'] ?? ''}'),
       ),
-      body: appointmentDetails?['ResponseCode']['\$t'] != 'SC0001' ? _buildMessage(appointmentDetails) : ListView.builder(
-          itemCount: appointmentDetails?['Appointments']['Appointment']?.length ?? 0,
-          itemBuilder: (_, index) => _buildAppointment(appointmentDetails?['Appointments']['Appointment'][index])
+      body: appointmentDetails == null || appointmentDetails['ResponseCode']['\$t'] != 'SC0001' ? _buildMessage(appointmentDetails) : ListView.builder(
+          itemCount: appointmentDetails['Appointments']['Appointment']?.length ?? 0,
+          itemBuilder: (_, index) => _buildAppointment(appointmentDetails['Appointments']['Appointment'][index])
     ));
   }
 
   Widget _buildMessage(Map? appointmentDetails) {
     return Center(
-      child: Text('${appointmentDetails?['ResponseDescription']['\$t']}',
+      child: Text('${appointmentDetails == null ? 'Refresh the data once' : appointmentDetails['ResponseDescription']['\$t']}',
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
       ),
     );
@@ -46,17 +47,23 @@ class _AppointmentListState extends State<AppointmentList> {
           'Customer Country : ${appointment['CustomerDetails']['CustomerCounty']['\$t'] ?? '-'}'),
         Text('Warranty Details : ${appointment['WarrantyDetails']['ChargeType']['\$t'] ?? '-'} \n'
             'Job Type : ${appointment['WarrantyDetails']['JobType']['\$t'] ?? '-'}'),
-         IconButton(onPressed: () => openDialPad('Job Type : ${appointment['CustomerDetails']['CustomerMobileNo']['\$t']}'), icon: Icon(Icons.call)),
+         IconButton(onPressed: () => openDialPad('${appointment['CustomerDetails']['CustomerMobileNo']['\$t']}'), icon: Icon(Icons.call)),
          IconButton(onPressed: openMaps, icon: const Icon(Icons.location_on)),
     ]
     );
   }
 
   void openDialPad(String? mobileNumber){
-
+    var uri = Uri(scheme: 'tel', path: mobileNumber.toString());
+    canLaunchUrl(uri).then((bool result) {
+     launchUrl(uri);
+    });
   }
 
-  void openMaps() {
-
+  void openMaps() async {
+    if (!await launch(
+    'https://www.google.com/maps',
+    )) {
+    }
   }
 }

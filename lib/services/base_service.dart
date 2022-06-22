@@ -19,7 +19,7 @@ class BaseService {
       RequestType method = RequestType.get,
         Map<String, dynamic> extras = const {}, bool storeResponseInDb = false}) async {
 
-    dio.options.baseUrl = baseUrl ?? Urls.baseUrl ?? '';
+    dio.options.baseUrl = baseUrl ?? Urls.baseUrl;
     dio.options.headers[HttpHeaders.contentTypeHeader] = 'text/xml';
     dio.options.extra.addAll(extras);
     if(headers != null) dio.options.headers.addAll(headers);
